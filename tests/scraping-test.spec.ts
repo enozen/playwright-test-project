@@ -11,14 +11,12 @@ test.describe('Toscrape.com functionality', () => {
     await expect(page).toHaveTitle('Quotes to Scrape');
 
     // 3. Verifikojmë që të paktën një citat është i dukshëm në faqe
-    // Ne kërkojmë një element me klasën CSS '.quote'
     await expect(page.locator('.quote').first()).toBeVisible();
 
-    // 4. Klikojmë butonin "Next" për të lundruar te faqja tjetër
-    await page.getByRole('link', { name: 'Next →' }).click();
+    // 4. GJEJMË BUTONIN DUKE PËRDORUR KLASËN E TIJ CSS DHE E KLIKOJMË (Mënyra e saktë)
+    await page.locator('li.next a').click();
 
     // 5. Verifikojmë që kemi lundruar me sukses duke kontrolluar URL-në
-    // Presim që URL-ja të përfundojë me '/page/2/'
     await expect(page).toHaveURL('http://quotes.toscrape.com/page/2/');
   });
 
