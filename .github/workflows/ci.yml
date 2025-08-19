@@ -51,5 +51,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: your-registry/${{ github.repository }}:${{ github.sha }}
+          tags: ${{ secrets.DOCKER_REGISTRY_USER }}/playwright-test-project:latest
           platforms: linux/amd64,linux/arm64
