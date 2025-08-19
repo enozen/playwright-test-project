@@ -7,8 +7,8 @@ test.describe('Google Search Functionality', () => {
     await page.goto('https://www.google.com/');
 
     // 2. Eingabe des Suchbegriffs in das Suchfeld
-    await page.getByRole('combobox', { name: 'Suchen' }).fill('Playwright Framework');
-    
+    await page.locator('[aria-label="Search"]').fill('Playwright Framework');    
+   
     // 3. Auslösen der Suche durch Drücken der "Enter"-Taste
     await page.keyboard.press('Enter');
 
