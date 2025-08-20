@@ -1,4 +1,4 @@
-// tests/azure-devops-landing-page.spec.ts
+// tests/azure-devops-landing-page.spec.ts //
 
 import { test, expect } from '@playwright/test';
 test.describe('Azure DevOps Landing Page Validation', () => {
