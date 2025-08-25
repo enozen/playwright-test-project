@@ -12,6 +12,8 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
+      - name: Printo emrin e repository-t
+        run: echo "Repo: ${{ github.repository }}"
       - name: Code-Checkout
         uses: actions/checkout@v4
       - name: Node.js Umgebung initialisieren
@@ -37,6 +39,8 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
+      - name: Printo emrin e repository-t
+        run: echo "Repo: ${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v4
       - name: Docker Registry Login
