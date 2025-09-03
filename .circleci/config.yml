@@ -8,18 +8,18 @@ orbs:
 jobs:
   # Job zur Ausführung der Tests und zum Packen des Artefakts
   build-and-test-artifact:
-    # Executor: Eine Umgebung mit Node.js
+    # Executor: Eine Umgebung mit Node.js und Docker (für Playwright-Browser)
     executor:
-      name: node/default
+      name: node/default # Verwendet einen vordefinierten Node.js Executor
       tag: '18.17.1' # Spezifische Node.js-Version
     
-    resource_class: medium # Korrigiert den "resource class large" Fehler
+    # resource_class: medium # Ky rresht hiqet, node/default e menaxhon vete
 
     steps:
       - checkout # Code aus dem Repository abrufen
 
-      # Abhängigkeiten installieren (inkl. Playwright)
-      - node/install-dependencies
+      # KORRIGJIMI: Përdor 'node/install-packages' në vend të 'node/install-dependencies'
+      - node/install-packages
 
       # Playwright-Browser installieren
       - run:
