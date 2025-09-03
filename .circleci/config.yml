@@ -1,0 +1,50 @@
+# .circleci/config.yml
+version: 2.1
+
+# Definition der Orbs: Wiederverwendbare Pakete
+orbs:
+  node: circleci/node@5.0.3 # Node.js Orb für Node.js-spezifische Aufgaben
+
+jobs:
+  # Job zur Ausführung der Tests und zum Packen des Artefakts
+  build-and-test-artifact:
+    # Executor: Eine Umgebung mit Node.js
+    executor:
+      name: node/default
+      tag: '18.17.1' # Spezifische Node.js-Version
+    
+    resource_class: medium # Korrigiert den "resource class large" Fehler
+
+    steps:
+      - checkout # Code aus dem Repository abrufen
+
+      # Abhängigkeiten installieren (inkl. Playwright)
+      - node/install-dependencies
+
+      # Playwright-Browser installieren
+      - run:
+          name: Install Playwright Browsers
+          command: npx playwright install --with-deps
+
+      # Tests ausführen
+      - run:
+          name: Run E2E Tests
+          command: npm run test:e2e
+
+      # Artefakt packen (als .zip)
+      - run:
+          name: Archive Application Code
+          command: |
+            mkdir -p ~/artifacts
+            zip -r ~/artifacts/app-code.zip . -x "node_modules/*" ".git/*"
+
+      # Artefakt veröffentlichen
+      - store_artifacts:
+          path: ~/artifacts/app-code.zip
+          destination: app-code.zip
+
+# Workflows: Orchestriert die Jobs
+workflows:
+  build-test-publish:
+    jobs:
+      - build-and-test-artifact
