@@ -25,14 +25,16 @@ jobs:
       - name: End-to-End Tests ausführen
         run: npm run test:e2e
 
+      # Debugging i Artefaktit FILLON KËTU
       - name: Debug: Check if playwright-report directory exists
-        run: ls -la playwright-report/
+        run: ls -la playwright-report/ # Do të listojë përmbajtjen e folderit
 
       - name: Debug: Check current working directory
-        run: pwd 
+        run: pwd # Do të printojë direktorinë aktuale të punës
 
       - name: Debug: List all files in current directory
-        run: ls -la 
+        run: ls -la # Do të listojë të gjithë skedarët dhe folderat në direktorinë aktuale
+
       - name: Testbericht als Artefakt speichern
         if: always()
         uses: actions/upload-artifact@v4
