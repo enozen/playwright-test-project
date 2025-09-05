@@ -28,8 +28,7 @@ jobs:
       - name: End-to-End Tests ausführen
         run: npm run test:e2e
       - name: Testbericht als Artefakt speichern
-        if: always() # WICHTIG: Speichert den Bericht auch, wenn Tests fehlschlagen
-        uses: actions/upload-artifact@v4
+        if: always() 
         with:
         name: playwright-report 
         path: playwright-report/
