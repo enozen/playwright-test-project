@@ -38,6 +38,6 @@ jobs:
       - name: Testbericht als Artefakt speichern
         if: always()
         uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
+        with: # <---- KUJDES: KY WITH DUHET TË KETË 2 HAPESIRA MË THJESHTË SE 'uses'
+          name: playwright-report # <---- Kjo dhe 'path' duhet të jenë 2 hapsira më thellë se 'with'
           path: playwright-report/
