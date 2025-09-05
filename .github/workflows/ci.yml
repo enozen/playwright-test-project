@@ -1,13 +1,4 @@
-name: CI/CD Pipeline mit E2E-Tests
-
-on:
-  pull_request:
-    branches: [ "main" ]
-  push:
-    branches: [ "main" ]
-
-jobs:
-  e2e-validation:
+e2e-validation:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
@@ -25,15 +16,18 @@ jobs:
       - name: End-to-End Tests ausführen
         run: npm run test:e2e
 
-      # Debugging i Artefaktit Fillim: Vetëm ato që nuk dështojnë
+      # Debugging Artefakt: Kontrollo direktorine aktuale dhe liston skedaret
+      # Ky eshte hapi i diagnostikimit, s'ka lidhje me gabimin e sintakses ne linjen 29.
       - name: Debug: Check current working directory and list files
         run: |
-          pwd # Printon direktorinë aktuale të punës
-          ls -la # Liston të gjithë skedarët dhe folderat në direktorinë aktuale
+          pwd
+          ls -la
 
+      # Ky eshte blloku ku ndodhet gabimi sintaksor ne linjen 29 (path: playwright-report/)
       - name: Testbericht als Artefakt speichern
         if: always()
         uses: actions/upload-artifact@v4
-        with:
+        # Aty poshte eshte linja 29: 'path: playwright-report/'
+        with: # <-------------------- KY 'with' DUHET TE KETE KËTO HAPSIRA
           name: playwright-report
           path: playwright-report/
