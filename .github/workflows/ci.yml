@@ -25,19 +25,15 @@ jobs:
       - name: End-to-End Tests ausführen
         run: npm run test:e2e
 
-      # Debugging i Artefaktit FILLON KËTU
-      - name: Debug: Check if playwright-report directory exists
-        run: ls -la playwright-report/ # Do të listojë përmbajtjen e folderit
-
-      - name: Debug: Check current working directory
-        run: pwd # Do të printojë direktorinë aktuale të punës
-
-      - name: Debug: List all files in current directory
-        run: ls -la # Do të listojë të gjithë skedarët dhe folderat në direktorinë aktuale
+      # Debugging i Artefaktit Fillim: Vetëm ato që nuk dështojnë
+      - name: Debug: Check current working directory and list files
+        run: |
+          pwd # Printon direktorinë aktuale të punës
+          ls -la # Liston të gjithë skedarët dhe folderat në direktorinë aktuale
 
       - name: Testbericht als Artefakt speichern
         if: always()
         uses: actions/upload-artifact@v4
-        with: # <---- KUJDES: KY WITH DUHET TË KETË 2 HAPESIRA MË THJESHTË SE 'uses'
-          name: playwright-report # <---- Kjo dhe 'path' duhet të jenë 2 hapsira më thellë se 'with'
+        with:
+          name: playwright-report
           path: playwright-report/
