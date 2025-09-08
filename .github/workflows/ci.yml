@@ -20,8 +20,55 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
+      
+      # DEBUGGING: Check Playwright config
+      - name: Debug - Check Playwright configuration
+        run: |
+          echo "=== Playwright configuration check ==="
+          if [ -f "playwright.config.js" ]; then
+            echo "✅ playwright.config.js exists"
+            cat playwright.config.js
+          else
+            echo "❌ playwright.config.js missing"
+          fi
+          echo "=== Test directory check ==="
+          ls -la tests/
+
+      # RUN TESTS with explicit reporter flag  
+      - name: Run Playwright tests (with explicit HTML reporter)
+        run: |
+          echo "=== Running Playwright tests ==="
+          npx playwright test --reporter=html
+          echo "=== Test execution completed ==="
+      
+      # COMPREHENSIVE DEBUGGING after tests
+      - name: Debug - Check everything after tests
+        run: |
+          echo "=== Current directory contents ==="
+          ls -la
+          echo "=== Search for ALL possible report directories ==="
+          find . -type d $ -name "*report*" -o -name "*results*" $ 2>/dev/null | head -20 || echo "No report directories found"
+          echo "=== Search for HTML files ==="
+          find . -name "*.html" 2>/dev/null | head -10 || echo "No HTML files found"
+          echo "=== playwright-report check ==="
+          if [ -d "playwright-report" ]; then
+            echo "✅ playwright-report exists!"
+            echo "Contents:"
+            ls -la playwright-report/
+            echo "HTML files in playwright-report:"
+            find playwright-report/ -name "*.html" || echo "No HTML files in playwright-report"
+          else
+            echo "❌ playwright-report does NOT exist"
+          fi
+          echo "=== Test output files ==="
+          if [ -d "test-results" ]; then
+            echo "✅ test-results directory exists"
+            ls -la test-results/
+          else
+            echo "❌ No test-results directory"
+          fi
+
+      # Upload artifact
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
