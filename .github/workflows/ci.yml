@@ -24,6 +24,24 @@ jobs:
         run: npx playwright install --with-deps
       - name: End-to-End Tests ausführen
         run: npm run test:e2e
+      
+      # Debug: Shiko çfarë skedarësh dhe folderash kemi pas testeve
+      - name: Debug - List all files and directories after tests
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          echo "=== All files and directories ==="
+          find . -type d -name "*report*" -o -name "*results*" | head -20
+          echo "=== Content of current directory ==="
+          ls -la
+          echo "=== Check for playwright-report specifically ==="
+          if [ -d "playwright-report" ]; then
+            echo "playwright-report directory exists"
+            ls -la playwright-report/
+          else
+            echo "playwright-report directory does NOT exist"
+          fi
+
       - name: Testbericht als Artefakt speichern
         if: always()
         uses: actions/upload-artifact@v4
