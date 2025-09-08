@@ -9,75 +9,25 @@ on:
 jobs:
   e2e-validation:
     if: github.event_name == 'pull_request'
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - name: Code-Checkout
-        uses: actions/checkout@v4
-      - name: Node.js Umgebung initialisieren
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-      - name: Abhängigkeiten installieren
+          node-version: lts/*
+      - name: Install dependencies
         run: npm ci
-      - name: Playwright Browser-Binaries installieren
+      - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-
-      # Debugging PËRPARA testeve
-      - name: Debug - Check package.json script
-        run: |
-          echo "=== Package.json scripts ==="
-          cat package.json | grep -A 5 -B 5 "scripts"
-
-      # FORCO PLAYWRIGHT të krijojë raport duke përdorur komanda të drejtpërdrejta
-      - name: End-to-End Tests ausführen (with forced HTML report)
-        run: |
-          echo "=== Running Playwright with explicit HTML reporter ==="
-          npx playwright test --reporter=html
-        continue-on-error: true
-
-      # Debugging PAS testeve
-      - name: Debug - Comprehensive check after tests
-        run: |
-          echo "=== Current directory ==="
-          pwd
-          echo "=== All files and directories (with details) ==="
-          ls -la
-          echo "=== Search for ALL report directories ==="
-          find . -type d -name "*report*" -o -name "*results*" -o -name "*coverage*" 2>/dev/null || true
-          echo "=== Search for HTML files ==="
-          find . -name "*.html" 2>/dev/null | head -10 || true
-          echo "=== Check for playwright-report specifically ==="
-          if [ -d "playwright-report" ]; then
-            echo "✅ playwright-report directory exists!"
-            ls -la playwright-report/
-          else
-            echo "❌ playwright-report directory does NOT exist"
-          fi
-          echo "=== Check for test-results directory ==="
-          if [ -d "test-results" ]; then
-            echo "✅ test-results directory exists!"
-            ls -la test-results/
-          else
-            echo "❌ test-results directory does NOT exist"
-          fi
-
-      # BACKUP APPROACH: Upload whatever report directory exists
-      - name: Upload playwright-report (if exists)
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Run Playwright tests
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: playwright-report/
-        continue-on-error: true
-
-      - name: Upload test-results (backup approach)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-backup
-          path: test-results/
-        continue-on-error: true
+          retention-days: 30
 
   build-and-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
