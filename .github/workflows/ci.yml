@@ -24,13 +24,6 @@ jobs:
         run: npx playwright install --with-deps
       - name: End-to-End Tests ausführen
         run: npm run test:e2e
-
-      # KORRIGJIMI FILLON KËTU: Hapsirat për bllokun 'run: |'
-      - name: Debug: Check current working directory and list files
-        run: |
-          pwd
-          ls -la
-
       - name: Testbericht als Artefakt speichern
         if: always()
         uses: actions/upload-artifact@v4
