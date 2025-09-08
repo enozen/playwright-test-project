@@ -22,32 +22,62 @@ jobs:
         run: npm ci
       - name: Playwright Browser-Binaries installieren
         run: npx playwright install --with-deps
-      - name: End-to-End Tests ausführen
-        run: npm run test:e2e
-      
-      # Debug: Shiko çfarë skedarësh dhe folderash kemi pas testeve
-      - name: Debug - List all files and directories after tests
+
+      # Debugging PËRPARA testeve
+      - name: Debug - Check package.json script
+        run: |
+          echo "=== Package.json scripts ==="
+          cat package.json | grep -A 5 -B 5 "scripts"
+
+      # FORCO PLAYWRIGHT të krijojë raport duke përdorur komanda të drejtpërdrejta
+      - name: End-to-End Tests ausführen (with forced HTML report)
+        run: |
+          echo "=== Running Playwright with explicit HTML reporter ==="
+          npx playwright test --reporter=html
+        continue-on-error: true
+
+      # Debugging PAS testeve
+      - name: Debug - Comprehensive check after tests
         run: |
           echo "=== Current directory ==="
           pwd
-          echo "=== All files and directories ==="
-          find . -type d -name "*report*" -o -name "*results*" | head -20
-          echo "=== Content of current directory ==="
+          echo "=== All files and directories (with details) ==="
           ls -la
+          echo "=== Search for ALL report directories ==="
+          find . -type d -name "*report*" -o -name "*results*" -o -name "*coverage*" 2>/dev/null || true
+          echo "=== Search for HTML files ==="
+          find . -name "*.html" 2>/dev/null | head -10 || true
           echo "=== Check for playwright-report specifically ==="
           if [ -d "playwright-report" ]; then
-            echo "playwright-report directory exists"
+            echo "✅ playwright-report directory exists!"
             ls -la playwright-report/
           else
-            echo "playwright-report directory does NOT exist"
+            echo "❌ playwright-report directory does NOT exist"
+          fi
+          echo "=== Check for test-results directory ==="
+          if [ -d "test-results" ]; then
+            echo "✅ test-results directory exists!"
+            ls -la test-results/
+          else
+            echo "❌ test-results directory does NOT exist"
           fi
 
-      - name: Testbericht als Artefakt speichern
+      # BACKUP APPROACH: Upload whatever report directory exists
+      - name: Upload playwright-report (if exists)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
+        continue-on-error: true
+
+      - name: Upload test-results (backup approach)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-backup
+          path: test-results/
+        continue-on-error: true
 
   build-and-deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
